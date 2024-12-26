@@ -21,7 +21,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-/storage/app
-/bootstrap/cache
+bootstrap/cache/
+/storage/app/
 _ide_helper.php
 .phpstorm.meta.php
