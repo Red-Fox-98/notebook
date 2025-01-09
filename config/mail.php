@@ -18,6 +18,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Global "From" Address
+    |--------------------------------------------------------------------------
+    |
+    | You may wish for all emails sent by your application to be sent from
+    | the same address. Here you may specify a name and address that is
+    | used globally for all emails that are sent by your application.
+    |
+    */
+
+    'from' => [
+        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        'name' => env('MAIL_FROM_NAME', 'Example'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Mailer Configurations
     |--------------------------------------------------------------------------
     |
@@ -37,20 +53,21 @@ return [
 
     'mailers' => [
 
-        'smtp' => [
-            'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME'),
-            'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', '127.0.0.1'),
-            'port' => env('MAIL_PORT', 2525),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
-            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+        'array' => [
+            'transport' => 'array',
         ],
 
-        'ses' => [
-            'transport' => 'ses',
+        'failover' => [
+            'mailers' => [
+                'smtp',
+                'log',
+            ],
+            'transport' => 'failover',
+        ],
+
+        'log' => [
+            'channel' => env('MAIL_LOG_CHANNEL'),
+            'transport' => 'log',
         ],
 
         'postmark' => [
@@ -65,52 +82,35 @@ return [
             'transport' => 'resend',
         ],
 
-        'sendmail' => [
-            'transport' => 'sendmail',
-            'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
-        ],
-
-        'log' => [
-            'transport' => 'log',
-            'channel' => env('MAIL_LOG_CHANNEL'),
-        ],
-
-        'array' => [
-            'transport' => 'array',
-        ],
-
-        'failover' => [
-            'transport' => 'failover',
-            'mailers' => [
-                'smtp',
-                'log',
-            ],
-        ],
-
         'roundrobin' => [
-            'transport' => 'roundrobin',
             'mailers' => [
                 'ses',
                 'postmark',
             ],
+            'transport' => 'roundrobin',
         ],
 
-    ],
+        'sendmail' => [
+            'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
+            'transport' => 'sendmail',
+        ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Global "From" Address
-    |--------------------------------------------------------------------------
-    |
-    | You may wish for all emails sent by your application to be sent from
-    | the same address. Here you may specify a name and address that is
-    | used globally for all emails that are sent by your application.
-    |
-    */
+        'ses' => [
+            'transport' => 'ses',
+        ],
 
-    'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'smtp' => [
+            'host' => env('MAIL_HOST', '127.0.0.1'),
+            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+            'password' => env('MAIL_PASSWORD'),
+            'port' => env('MAIL_PORT', 2525),
+            'scheme' => env('MAIL_SCHEME'),
+            'timeout' => null,
+            'transport' => 'smtp',
+            'url' => env('MAIL_URL'),
+            'username' => env('MAIL_USERNAME'),
+        ],
+
     ],
 
 ];
