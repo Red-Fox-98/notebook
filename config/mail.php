@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
 
     /*
@@ -27,9 +29,9 @@ return [
     |
     */
 
-    'from' => [
+    'from'    => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'name'    => env('MAIL_FROM_NAME', 'Example'),
     ],
 
     /*
@@ -53,24 +55,22 @@ return [
 
     'mailers' => [
 
-        'array' => [
-            'transport' => 'array',
-        ],
+        'array'      => ['transport' => 'array'],
 
-        'failover' => [
-            'mailers' => [
+        'failover'   => [
+            'mailers'   => [
                 'smtp',
                 'log',
             ],
             'transport' => 'failover',
         ],
 
-        'log' => [
-            'channel' => env('MAIL_LOG_CHANNEL'),
+        'log'        => [
+            'channel'   => env('MAIL_LOG_CHANNEL'),
             'transport' => 'log',
         ],
 
-        'postmark' => [
+        'postmark'   => [
             'transport' => 'postmark',
             // 'message_stream_id' => env('POSTMARK_MESSAGE_STREAM_ID'),
             // 'client' => [
@@ -78,37 +78,33 @@ return [
             // ],
         ],
 
-        'resend' => [
-            'transport' => 'resend',
-        ],
+        'resend'     => ['transport' => 'resend'],
 
         'roundrobin' => [
-            'mailers' => [
+            'mailers'   => [
                 'ses',
                 'postmark',
             ],
             'transport' => 'roundrobin',
         ],
 
-        'sendmail' => [
-            'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
+        'sendmail'   => [
+            'path'      => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
             'transport' => 'sendmail',
         ],
 
-        'ses' => [
-            'transport' => 'ses',
-        ],
+        'ses'        => ['transport' => 'ses'],
 
-        'smtp' => [
-            'host' => env('MAIL_HOST', '127.0.0.1'),
+        'smtp'       => [
+            'host'         => env('MAIL_HOST', '127.0.0.1'),
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
-            'password' => env('MAIL_PASSWORD'),
-            'port' => env('MAIL_PORT', 2525),
-            'scheme' => env('MAIL_SCHEME'),
-            'timeout' => null,
-            'transport' => 'smtp',
-            'url' => env('MAIL_URL'),
-            'username' => env('MAIL_USERNAME'),
+            'password'     => env('MAIL_PASSWORD'),
+            'port'         => env('MAIL_PORT', 2525),
+            'scheme'       => env('MAIL_SCHEME'),
+            'timeout'      => null,
+            'transport'    => 'smtp',
+            'url'          => env('MAIL_URL'),
+            'username'     => env('MAIL_USERNAME'),
         ],
 
     ],
