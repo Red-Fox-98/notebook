@@ -46,7 +46,8 @@ class NotebookService
         return Notebook::query()->paginate($request->perPage ?? 10);
     }
 
-    final public function update(int $id, UpdateRequestData $request){
+    final public function update(int $id, UpdateRequestData $request)
+    {
         /** @var Notebook $notebook */
         $notebook = Notebook::query()->find($id);
 
@@ -68,8 +69,10 @@ class NotebookService
         return responder()->success(['status' => 'Successfully updated'])->respond();
     }
 
-    final public function delete(int $id){
+    final public function delete(int $id)
+    {
         Notebook::query()->find($id)->delete();
+
         return responder()->success(['status' => 'Successfully deleted'])->respond();
     }
 }

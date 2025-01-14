@@ -37,7 +37,8 @@ class NotebookController extends Controller
         return $this->notebookService->update($id, $request->getData());
     }
 
-    public function delete(int $id){
+    public function delete(int $id)
+    {
         return $this->notebookService->delete($id);
     }
 }

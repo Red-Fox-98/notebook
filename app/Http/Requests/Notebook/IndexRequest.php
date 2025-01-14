@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Notebook;
 
 use App\Data\DataObjects\Notebook\IndexRequestData;
