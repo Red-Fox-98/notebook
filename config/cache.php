@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Str;
 
 return [
@@ -28,7 +30,7 @@ return [
     |
     */
 
-    'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_cache_'),
+    'prefix'  => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_cache_'),
 
     /*
     |--------------------------------------------------------------------------
@@ -44,62 +46,60 @@ return [
     |
     */
 
-    'stores' => [
+    'stores'  => [
 
-        'array' => [
-            'driver' => 'array',
+        'array'     => [
+            'driver'    => 'array',
             'serialize' => false,
         ],
 
-        'database' => [
-            'connection' => env('DB_CACHE_CONNECTION'),
-            'driver' => 'database',
+        'database'  => [
+            'connection'      => env('DB_CACHE_CONNECTION'),
+            'driver'          => 'database',
             'lock_connection' => env('DB_CACHE_LOCK_CONNECTION'),
-            'lock_table' => env('DB_CACHE_LOCK_TABLE'),
-            'table' => env('DB_CACHE_TABLE', 'cache'),
+            'lock_table'      => env('DB_CACHE_LOCK_TABLE'),
+            'table'           => env('DB_CACHE_TABLE', 'cache'),
         ],
 
-        'dynamodb' => [
-            'driver' => 'dynamodb',
+        'dynamodb'  => [
+            'driver'   => 'dynamodb',
             'endpoint' => env('DYNAMODB_ENDPOINT'),
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'table' => env('DYNAMODB_CACHE_TABLE', 'cache'),
+            'key'      => env('AWS_ACCESS_KEY_ID'),
+            'region'   => env('AWS_DEFAULT_REGION', 'us-east-1'),
+            'secret'   => env('AWS_SECRET_ACCESS_KEY'),
+            'table'    => env('DYNAMODB_CACHE_TABLE', 'cache'),
         ],
 
-        'file' => [
-            'driver' => 'file',
+        'file'      => [
+            'driver'    => 'file',
             'lock_path' => storage_path('framework/cache/data'),
-            'path' => storage_path('framework/cache/data'),
+            'path'      => storage_path('framework/cache/data'),
         ],
 
         'memcached' => [
-            'driver' => 'memcached',
-            'options' => [
+            'driver'        => 'memcached',
+            'options'       => [
                 // Memcached::OPT_CONNECT_TIMEOUT => 2000,
             ],
             'persistent_id' => env('MEMCACHED_PERSISTENT_ID'),
-            'sasl' => [
+            'sasl'          => [
                 env('MEMCACHED_USERNAME'),
                 env('MEMCACHED_PASSWORD'),
             ],
-            'servers' => [
+            'servers'       => [
                 [
-                    'host' => env('MEMCACHED_HOST', '127.0.0.1'),
-                    'port' => env('MEMCACHED_PORT', 11211),
+                    'host'   => env('MEMCACHED_HOST', '127.0.0.1'),
+                    'port'   => env('MEMCACHED_PORT', 11211),
                     'weight' => 100,
                 ],
             ],
         ],
 
-        'octane' => [
-            'driver' => 'octane',
-        ],
+        'octane'    => ['driver' => 'octane'],
 
-        'redis' => [
-            'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),
-            'driver' => 'redis',
+        'redis'     => [
+            'connection'      => env('REDIS_CACHE_CONNECTION', 'cache'),
+            'driver'          => 'redis',
             'lock_connection' => env('REDIS_CACHE_LOCK_CONNECTION', 'default'),
         ],
 
