@@ -78,6 +78,21 @@ return [
             'username'       => env('DB_USERNAME', 'root'),
         ],
 
+        'testing'   => [
+            'charset'        => env('DB_TEST_CHARSET', 'utf8'),
+            'database'       => env('DB_TEST_DATABASE', 'laravel'),
+            'driver'         => 'pgsql',
+            'host'           => env('DB_TEST_HOST', '127.0.0.1'),
+            'password'       => env('DB_TEST_PASSWORD', ''),
+            'port'           => env('DB_TEST_PORT', '5432'),
+            'prefix'         => '',
+            'prefix_indexes' => true,
+            'search_path'    => 'public',
+            'sslmode'        => 'prefer',
+            'url'            => env('DB_TEST_URL'),
+            'username'       => env('DB_TEST_USERNAME', 'root'),
+        ],
+
         'sqlite'  => [
             'busy_timeout'            => null,
             'database'                => env('DB_DATABASE', database_path('database.sqlite')),

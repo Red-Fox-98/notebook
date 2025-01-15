@@ -43,7 +43,10 @@ class NotebookService
 
     final public function index(IndexRequestData $request)
     {
-        return Notebook::query()->paginate($request->perPage ?? 10);
+        /** @var Notebook $notebook */
+        $notebook = Notebook::query()->paginate($request->perPage ?? 10);
+
+        return responder()->success($notebook, new NotebookTransformer())->respond();
     }
 
     final public function update(int $id, UpdateRequestData $request)

@@ -10,13 +10,15 @@ class NotebookFactory extends Factory
 {
     public function definition()
     {
+        $fullName = $this->faker->word() . ' ' . $this->faker->word() . ' ' . $this->faker->word();
+
         return [
-            'company'       => $this->faker->word(),
+            'full_name' => $fullName,
+            'company' => $this->faker->company(),
+            'phone' => str_replace(['+', '(', ')', '-', '.', ' '], '', $this->faker->phoneNumber()),
+            'email' => $this->faker->unique()->safeEmail(),
             'date_of_birth' => $this->faker->date(),
-            'email'         => $this->faker->unique()->safeEmail(),
-            'full_name'     => $this->faker->name(),
-            'phone'         => $this->faker->phoneNumber(),
-            'photo'         => $this->faker->imageUrl(),
+            'photo' => $this->faker->imageUrl(),
         ];
     }
 }
