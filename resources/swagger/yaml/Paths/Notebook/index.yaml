@@ -1,0 +1,12 @@
+paths:
+  /v1/notebook:
+    get:
+      tags:
+        - "Notebooks"
+      summary: "Index Notebook entry"
+      description: "Returns a specific page with a list of notepad entries from a database"
+      requestBody:
+        $ref: '#/components/requestBodies/IndexNotebookRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/IndexNotebookResponse'

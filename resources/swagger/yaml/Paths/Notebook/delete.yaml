@@ -1,0 +1,18 @@
+paths:
+  /v1/notebook/{id}:
+    delete:
+      tags:
+        - "Notebooks"
+      summary: "Deleting Notebook entry"
+      description: "Deletes the notebook's data in DB. Returns the status"
+      parameters:
+        - name: "id"
+          description: "Notebook id"
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          $ref: '#/components/responses/DeleteNotebookResponse'
+        404:
+          $ref: '#/components/responses/NotFoundResponse'

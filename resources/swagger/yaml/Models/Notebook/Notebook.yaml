@@ -1,0 +1,27 @@
+components:
+  schemas:
+    Notebook:
+      type: object
+      required:
+        - id
+        - full_name
+        - company
+        - phone
+        - email
+        - date_of_birth
+        - photo
+      properties:
+        id:
+          type: integer
+        full_name:
+          type: string
+        company:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        date_of_birth:
+          type: string
+        photo:
+          type: string

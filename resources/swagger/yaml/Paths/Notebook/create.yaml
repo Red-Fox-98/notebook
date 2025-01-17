@@ -1,0 +1,14 @@
+paths:
+  /v1/notebook:
+    post:
+      tags:
+        - "Notebooks"
+      summary: "Adding Notebook entry"
+      description: "Saves the notebook's data in DB. Returns the notebook id"
+      requestBody:
+        $ref: '#/components/requestBodies/CreateNotebookRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/CreateNotebookResponse'
+        422:
+          $ref: '#/components/responses/InvalidInputResponse'

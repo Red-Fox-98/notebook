@@ -12,6 +12,7 @@ class NotebookTransformer extends Transformer
     public function transform(Notebook $notebook): mixed
     {
         return [
+            'id' => $notebook->id,
             'full_name' => $notebook->full_name,
             'company' => $notebook->company,
             'phone' => $notebook->phone,

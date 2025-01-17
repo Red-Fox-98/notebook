@@ -12,8 +12,8 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 class IndexRequestData extends Data
 {
     public function __construct(
-        public int | null $perPage,
         public int $page,
+        public int | null $perPage,
     ) {
     }
 }

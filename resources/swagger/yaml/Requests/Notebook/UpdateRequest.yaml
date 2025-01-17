@@ -1,0 +1,36 @@
+components:
+  requestBodies:
+    UpdateNotebookRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - surname
+              - patronymic
+            properties:
+              name:
+                type: string
+                example: "Петр"
+              surname:
+                type: string
+                example: "Петров"
+              patronymic:
+                type: string
+                example: "Петрович"
+              company:
+                type: string
+                example: "company"
+              phone:
+                type: integer
+                example: 89667778899
+              email:
+                type: string
+                example: mail@gml.com
+              date_of_birth:
+                type: string
+                example: 1998-09-09
+              photo:
+                type: file
+                example: "/tmp/phpuli87fl2n0cvfQoqx7j"
