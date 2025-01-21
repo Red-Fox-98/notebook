@@ -28,9 +28,7 @@ class UpdateTest extends TestCase
 
         $response = $this->json('POST', "/api/v1/notebook/$notebookId->id", $notebook);
 
-        $response->assertStatus(200)->assertJsonStructure([
-            'data' => ['status'],
-        ]);
+        $response->assertStatus(200)->assertJsonStructure(['data' => ['status'],]);
 
         $this->assertDatabaseHas('notebooks', ['email' => $notebook['email']]);
     }

@@ -15,11 +15,11 @@ class UpdateRequestData extends Data
         public string $name,
         public string $surname,
         public string $patronymic,
-        public string | null $company,
-        public string | null $phone,
-        public string | null $email,
-        public string | null $dateOfBirth,
-        public string | null $photo,
+        public ?string $company,
+        public ?string $phone,
+        public ?string $email,
+        public ?string $dateOfBirth,
+        public ?string $photo,
     ) {
     }
 }

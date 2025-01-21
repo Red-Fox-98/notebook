@@ -16,9 +16,7 @@ class DeleteTest extends TestCase
 
         $response = $this->json('DELETE', "/api/v1/notebook/$notebook->id");
 
-        $response->assertStatus(200)->assertJsonStructure([
-            'data' => ['status'],
-        ]);
+        $response->assertStatus(200)->assertJsonStructure(['data' => ['status'],]);
 
         $this->assertDatabaseMissing('notebooks', ['id' => $notebook->id]);
     }

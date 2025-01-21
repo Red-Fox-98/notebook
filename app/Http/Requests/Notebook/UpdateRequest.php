@@ -12,14 +12,14 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required','string'],
-            'surname' => ['required','string'],
-            'patronymic' => ['required','string'],
-            'company' => 'string',
-            'phone' => 'int',
-            'email' => 'email',
-            'date_of_birth' => 'date',
-            'photo' => 'mimes:jpg,png',
+            'name' => [ 'required' , 'string' ],
+            'surname' => [ 'required' , 'string' ],
+            'patronymic' => [ 'required' , 'string' ],
+            'company' => [ 'string' ],
+            'phone' => [ 'int' ],
+            'email' => [ 'email' ],
+            'date_of_birth' => [ 'date' ],
+            'photo' => [ 'mimes:jpg,png' ],
         ];
     }
 

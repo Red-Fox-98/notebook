@@ -25,10 +25,7 @@ class CreateTest extends TestCase
 
         $response = $this->json('POST', '/api/v1/notebook/', $notebook);
 
-        $response->assertStatus(200)->assertJsonStructure([
-           'data' => ['id'],
-        ]);
-
+        $response->assertStatus(200)->assertJsonStructure(['data' => ['id']]);
 
         $this->assertDatabaseHas('notebooks', ['email' => $notebook['email']]);
     }

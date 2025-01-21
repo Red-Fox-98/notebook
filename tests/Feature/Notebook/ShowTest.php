@@ -17,7 +17,8 @@ class ShowTest extends TestCase
         $response = $this->json('GET', "/api/v1/notebook/$notebook->id");
 
         $response->assertStatus(200)->assertJsonStructure([
-            'data' => ['full_name', 'company', 'phone', 'email', 'date_of_birth', 'photo'],
-        ]);
+            'data' => [
+                'full_name', 'company', 'phone', 'email', 'date_of_birth', 'photo',
+            ],]);
     }
 }

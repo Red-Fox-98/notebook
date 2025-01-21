@@ -8,6 +8,8 @@ use App\Http\Requests\Notebook\CreateRequest;
 use App\Http\Requests\Notebook\IndexRequest;
 use App\Http\Requests\Notebook\UpdateRequest;
 use App\Services\Notebook\NotebookService;
+use App\Transformers\NotebookTransformer;
+use Illuminate\Http\JsonResponse;
 
 class NotebookController extends Controller
 {
@@ -15,30 +17,44 @@ class NotebookController extends Controller
     {
     }
 
-    public function create(CreateRequest $request)
+    public function create(CreateRequest $request): JsonResponse
     {
         $notebook = $this->notebookService->create($request->getData());
 
         return responder()->success(['id' => $notebook->id])->respond();
     }
 
-    public function show(int $id)
+    public function show(int $id): JsonResponse
     {
-        return $this->notebookService->show($id);
+        $notebook = $this->notebookService->show($id);
+        if (!$notebook) {
+            return responder()->error('404', 'Not Found')->respond(404);
+        }
+
+        return responder()->success($notebook, new NotebookTransformer())->respond();
     }
 
-    public function index(IndexRequest $request)
+    public function index(IndexRequest $request): JsonResponse
     {
-        return $this->notebookService->index($request->getData());
+        $notebook = $this->notebookService->index($request->getData());
+
+        return responder()->success($notebook, new NotebookTransformer())->respond();
     }
 
-    public function update(int $id, UpdateRequest $request)
+    public function update(int $id, UpdateRequest $request): JsonResponse
     {
-        return $this->notebookService->update($id, $request->getData());
+        $notebook = $this->notebookService->update($id, $request->getData());
+        if (!$notebook) {
+            return responder()->error('404', 'Not Found')->respond(404);
+        }
+
+        return responder()->success(['status' => 'Successfully updated'])->respond();
     }
 
-    public function delete(int $id)
+    public function delete(int $id): JsonResponse
     {
-        return $this->notebookService->delete($id);
+        $this->notebookService->delete($id);
+
+        return responder()->success(['status' => 'Successfully deleted'])->respond();
     }
 }
