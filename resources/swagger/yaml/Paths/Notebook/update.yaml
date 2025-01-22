@@ -1,0 +1,16 @@
+paths:
+  /v1/notebook/{id}:
+    post:
+      tags:
+        - "Notebooks"
+      summary: "Update Notebook entry"
+      description: "Modifying a specific record in the database. Returns the status"
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateNotebookRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/UpdateNotebookResponse'
+        422:
+          $ref: '#/components/responses/InvalidInputResponse'
+        404:
+          $ref: '#/components/responses/NotFoundResponse'

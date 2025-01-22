@@ -1,0 +1,456 @@
+openapi: 3.0.0
+info:
+  title: NotebookApp
+  description: Notepad notes app
+  version: 0.0.1
+tags:
+  - name: "Notebook"
+    description: "Notepad"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Notebook:
+      type: object
+      required:
+        - id
+        - full_name
+        - company
+        - phone
+        - email
+        - date_of_birth
+        - photo
+      properties:
+        id:
+          type: integer
+        full_name:
+          type: string
+        company:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        date_of_birth:
+          type: string
+        photo:
+          type: string
+    Pagination:
+      type: object
+      required:
+        - count
+        - total
+        - perPage
+        - currentPage
+        - totalPages
+        - links
+      properties:
+        count:
+          type: integer
+          description: "amount of items on current page"
+        total:
+          type: integer
+          description: "amount of items on all pages"
+        perPage:
+          type: integer
+          description: "items limit per page"
+        currentPage:
+          type: integer
+          description: "number of a currently displayed page"
+        totalPages:
+          type: integer
+          description: "amount of pages"
+        links:
+          type: object
+          description: "links for paginator such as 'next/previous/last/first' page"
+  parameters:
+    query:
+      in: query
+      name: query
+      description: search query
+      schema:
+        type: string
+    paginationPage:
+      in: query
+      name: page
+      description: a page to be displayed
+      schema:
+        type: integer
+    paginationPerPage:
+      in: query
+      name: perPage
+      description: amount of results per each page
+      schema:
+        type: integer
+  requestBodies:
+    CreateNotebookRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - surname
+              - patronymic
+              - phone
+              - email
+            properties:
+              name:
+                type: string
+                example: "Иван"
+              surname:
+                type: string
+                example: "Иванов"
+              patronymic:
+                type: string
+                example: "Иванович"
+              company:
+                type: string
+                example: "company"
+              phone:
+                type: integer
+                example: 89998887766
+              email:
+                type: string
+                example: example@example.com
+              date_of_birth:
+                type: string
+                example: 1999-09-09
+              photo:
+                type: file
+                example: "/tmp/phpuli87fl2n0cvfQoqx7j"
+    IndexNotebookRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - page
+            properties:
+              page:
+                type: integer
+                example: 2
+              perPage:
+                type: integer
+                example: 5
+    UpdateNotebookRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - surname
+              - patronymic
+            properties:
+              name:
+                type: string
+                example: "Петр"
+              surname:
+                type: string
+                example: "Петров"
+              patronymic:
+                type: string
+                example: "Петрович"
+              company:
+                type: string
+                example: "company"
+              phone:
+                type: integer
+                example: 89667778899
+              email:
+                type: string
+                example: mail@gml.com
+              date_of_birth:
+                type: string
+                example: 1998-09-09
+              photo:
+                type: file
+                example: "/tmp/phpuli87fl2n0cvfQoqx7j"
+  responses:
+    CreateNotebookResponse:
+      description: "successful operation"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - success
+              - data
+            properties:
+              status:
+                type: integer
+                example: 200
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 7
+    DeleteNotebookResponse:
+      description: "successful operation"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - success
+              - data
+            properties:
+              status:
+                type: integer
+                example: 200
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Successfully deleted"
+    IndexNotebookResponse:
+      description: "successful operation"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - success
+              - data
+            properties:
+              status:
+                type: integer
+                example: 200
+              success:
+                type: boolean
+                example: true
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notebook'
+    ShowNotebookResponse:
+      description: "successful operation"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - success
+              - data
+            properties:
+              status:
+                type: integer
+                example: 200
+              success:
+                type: boolean
+                example: true
+              data:
+                $ref: '#/components/schemas/Notebook'
+    UpdateNotebookResponse:
+      description: "successful operation"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - success
+              - data
+            properties:
+              status:
+                type: integer
+                example: 200
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Successfully updated"
+    EmptyResponse:
+      description: "returned primarily on delete requests"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - success
+            properties:
+              status:
+                type: integer
+                example: 200
+              success:
+                type: boolean
+                example: true
+    InvalidInputResponse:
+      description: "contains validations error messages"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - success
+            properties:
+              status:
+                type: integer
+                example: 422
+              success:
+                type: boolean
+                example: false
+              errors:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - validation
+                  properties:
+                    validation:
+                      type: object
+    ModelIdResponse:
+      description: "Entity was successfully created"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - success
+              - data
+            properties:
+              status:
+                type: integer
+                example: 200
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                required:
+                  - id
+                properties:
+                  id:
+                    type: integer
+    NotFoundResponse:
+      description: "Some of entities required to complete request wasn't found"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - success
+            properties:
+              status:
+                type: integer
+                example: 404
+              success:
+                type: boolean
+                example: false
+              errors:
+                type: object
+    NoAccessResponse:
+      description: "User is not authorized or not enough permissions"
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - success
+            properties:
+              status:
+                type: integer
+                example: 401
+              success:
+                type: boolean
+                example: false
+              errors:
+                type: object
+security:
+  - bearerAuth: []
+paths:
+  /v1/notebook:
+    post:
+      tags:
+        - "Notebooks"
+      summary: "Adding Notebook entry"
+      description: "Saves the notebook's data in DB. Returns the notebook id"
+      requestBody:
+        $ref: '#/components/requestBodies/CreateNotebookRequest'
+      responses:
+        "200":
+          $ref: '#/components/responses/CreateNotebookResponse'
+        "422":
+          $ref: '#/components/responses/InvalidInputResponse'
+    get:
+      tags:
+        - "Notebooks"
+      summary: "Index Notebook entry"
+      description: "Returns a specific page with a list of notepad entries from a database"
+      requestBody:
+        $ref: '#/components/requestBodies/IndexNotebookRequest'
+      responses:
+        "200":
+          $ref: '#/components/responses/IndexNotebookResponse'
+  /v1/notebook/{id}:
+    delete:
+      tags:
+        - "Notebooks"
+      summary: "Deleting Notebook entry"
+      description: "Deletes the notebook's data in DB. Returns the status"
+      parameters:
+        - name: "id"
+          description: "Notebook id"
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: '#/components/responses/DeleteNotebookResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+    get:
+      tags:
+        - "Notebooks"
+      summary: "Show Notebook entry"
+      description: "Returns a notepad record from the database"
+      parameters:
+        - name: "id"
+          description: "Notebook id"
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          $ref: '#/components/responses/ShowNotebookResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'
+    post:
+      tags:
+        - "Notebooks"
+      summary: "Update Notebook entry"
+      description: "Modifying a specific record in the database. Returns the status"
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateNotebookRequest'
+      responses:
+        "200":
+          $ref: '#/components/responses/UpdateNotebookResponse'
+        "422":
+          $ref: '#/components/responses/InvalidInputResponse'
+        "404":
+          $ref: '#/components/responses/NotFoundResponse'

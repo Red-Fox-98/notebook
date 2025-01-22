@@ -1,0 +1,16 @@
+openapi: 3.0.0
+info:
+  title: NotebookApp
+  description: Notepad notes app
+  version: 0.0.1
+tags:
+  - name: "Notebook"
+    description: "Notepad"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []

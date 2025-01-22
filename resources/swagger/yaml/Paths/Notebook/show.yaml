@@ -1,0 +1,18 @@
+paths:
+  /v1/notebook/{id}:
+    get:
+      tags:
+        - "Notebooks"
+      summary: "Show Notebook entry"
+      description: "Returns a notepad record from the database"
+      parameters:
+        - name: "id"
+          description: "Notebook id"
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          $ref: '#/components/responses/ShowNotebookResponse'
+        404:
+          $ref: '#/components/responses/NotFoundResponse'

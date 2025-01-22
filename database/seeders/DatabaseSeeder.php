@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Notebook;
@@ -12,6 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Notebook::factory()->count(13)->create();
+        Notebook::factory()->count(32)->create();
     }
 }

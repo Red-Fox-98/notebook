@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="Code Style Standards">
-    <description>A custom coding standard</description>
-
-    <config name="installed_paths" value="../../slevomat/coding-standard"/>
+<ruleset name="CodingStandard">
+    <description>The coding standard.</description>
 
     <file>app</file>
     <file>config</file>
@@ -10,649 +8,459 @@
     <file>routes</file>
     <file>tests</file>
 
-    <exclude-pattern>*/.phpstorm.meta.php</exclude-pattern>
-    <exclude-pattern>*/_ide_helper.php</exclude-pattern>
-    <exclude-pattern>*/cache/*</exclude-pattern>
-    <exclude-pattern>*/*.js</exclude-pattern>
-    <exclude-pattern>*/*.css</exclude-pattern>
-    <exclude-pattern>*/*.xml</exclude-pattern>
-    <exclude-pattern>*/*.blade.php</exclude-pattern>
-    <exclude-pattern>*/autoload.php</exclude-pattern>
-
+    <arg name="basepath" value="."/>
     <arg name="colors"/>
-    <arg value="sp"/>
+    <arg name="parallel" value="75"/>
+    <arg value="np"/>
 
-    <ini name="memory_limit" value="128M"/>
+    <config name="installed_paths" value="vendor/phpcompatibility/php-compatibility,vendor/slevomat/coding-standard"/>
 
-    <rule ref="PSR12">
-        <exclude name="PSR12.Traits.UseDeclaration.MultipleImport"/>
-        <exclude name="PSR12.Properties.ConstantVisibility.NotFound"/>
+    <rule ref="PHPCompatibility"/>
+    <config name="testVersion" value="8.1-"/>
 
-        <exclude name="Generic.Files.LineLength.TooLong"/>
+    <rule ref="PSR2">
+        <!-- PSR2 не поддерживает импортирование классов через фигурные собки !-->
+        <exclude name="PSR2.Namespaces.UseDeclaration"/>
+        <!-- Многострочные условия конфликтуют с правилом PSR12.ControlStructures.ControlStructureSpacing.FirstExpressionLine !-->
+        <exclude name="PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace" />
     </rule>
 
-    <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
-        <exclude-pattern>*/database/*</exclude-pattern>
+    <!-- Запрещаем использовать ряд функций !-->
+    <rule ref="Generic.PHP.ForbiddenFunctions">
+        <properties>
+            <property phpcs-only="true" name="forbiddenFunctions" type="array"
+                      value="print=>echo,create_function=>null,eval=>null,exec=>null,system=>null"/>
+        </properties>
     </rule>
 
+    <rule ref="Generic.Files.LineEndings">
+        <properties>
+            <property name="eolChar" value="\n"/>
+        </properties>
+    </rule>
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="ignoreComments" value="false"/>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="0"/>
+        </properties>
+    </rule>
+    <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
+
+    <!-- Ограничиваем максимальную вложенность при использовании {} в идеале, эта цифра должна быть в пределах 5-8 !-->
+    <rule ref="Generic.Metrics.NestingLevel">
+        <properties>
+            <property phpcs-only="true" name="nestingLevel" value="4"/>
+            <property phpcs-only="true" name="absoluteNestingLevel" value="5"/>
+        </properties>
+    </rule>
+
+    <rule ref="Generic.NamingConventions.CamelCapsFunctionName">
+        <properties>
+            <property phpcs-only="true" name="strict" value="true"/>
+        </properties>
+    </rule>
+
+    <!-- Если конкатенация избыточна (за исключением переноса на другую строку), то считаем это ошибкой !-->
+    <rule ref="Generic.Strings.UnnecessaryStringConcat">
+        <properties>
+            <property name="allowMultiline" value="true"/>
+            <property name="error" value="false"/>
+        </properties>
+    </rule>
+    <rule ref="Squiz.Strings.ConcatenationSpacing">
+        <properties>
+            <property name="spacing" value="1"/>
+            <property name="ignoreNewlines" value="true"/>
+        </properties>
+    </rule>
+
+    <rule ref="Generic.PHP.DisallowShortOpenTag"/>
+
+    <!-- Отключаем GOTO !-->
+    <rule ref="Generic.PHP.DiscourageGoto"/>
+
+    <!-- Запрещаем подавление ошибок через @ !-->
+    <rule ref="Generic.PHP.NoSilencedErrors"/>
+
+    <!-- Проверяем на наличие пустых условий !-->
+    <rule ref="Generic.CodeAnalysis.EmptyStatement"/>
+
+    <!-- Короткий синтаксис при объявлении массивов !-->
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
-    <rule ref="Generic.Arrays.ArrayIndent"/>
-    <rule ref="Generic.Formatting.SpaceAfterCast"/>
-    <rule ref="Generic.PHP.LowerCaseConstant"/>
-    <rule ref="Generic.PHP.LowerCaseKeyword"/>
-    <rule ref="Generic.PHP.LowerCaseType"/>
-    <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
-    <rule ref="Generic.VersionControl.GitMergeConflict"/>
 
-    <rule ref="Squiz.Strings.DoubleQuoteUsage.NotRequired"/>
+    <!-- Проверяем всегда ли условие возвращает true/false !-->
+    <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/>
 
-    <rule ref="Squiz.Commenting.FunctionComment.ExtraParamComment"/>
+    <!-- Если класс объявлен как final, то метод объявлять финальным уже не нужно !-->
+    <rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/>
 
+    <!-- Если метод переопределяется, и внутри него вызывается только родительский метод, то такое нам не нужно !-->
+    <rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/>
+
+    <!-- А вдруг у нас кто-то в файле создаст несколько одноименных классов?) !-->
+    <rule ref="Generic.Classes.DuplicateClassName"/>
+
+    <!-- Запрещаем испльзовать циклы for без условия (это должен быть while) !-->
+    <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop"/>
+
+    <!-- Во вложенных циклах счетчики должны быть с разными именами !-->
+    <rule ref="Generic.CodeAnalysis.JumbledIncrementer"/>
+
+    <!-- Запрещаем использовать оператор присовения в условиях !-->
+    <rule ref="Generic.CodeAnalysis.AssignmentInCondition"/>
+
+    <!-- Запречаем использовать echo как функцию !-->
+    <rule ref="Squiz.Strings.EchoedStrings"/>
+
+    <!-- После вызова echo, print, return, include, include_once, require, require_once необходим пробел !-->
+    <rule ref="Squiz.WhiteSpace.LanguageConstructSpacing"/>
+
+    <!-- Между объявленными функциями (методами) необходимо наличие пустой строки !-->
     <rule ref="Squiz.WhiteSpace.FunctionSpacing">
         <properties>
             <property name="spacing" value="1"/>
-            <property name="spacingBeforeFirst" value="0"/>
             <property name="spacingAfterLast" value="0"/>
+            <property name="spacingBeforeFirst" value="0"/>
         </properties>
     </rule>
 
-    <rule ref="vendor/slevomat/coding-standard/SlevomatCodingStandard/ruleset.xml">
-        <!-- Нужные правила, но пока исключаем, много кода править придется -->
-        <exclude name="SlevomatCodingStandard.Classes.RequireAbstractOrFinal"/>
-        <exclude name="SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingAnyTypeHint"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingAnyTypeHint"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingTraversableTypeHintSpecification"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingAnyTypeHint"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification"/>
-        <exclude name="SlevomatCodingStandard.Functions.FunctionLength"/>
-<!--        <exclude name="SlevomatCodingStandard.Files.FunctionLength"/>-->
-        <exclude name="SlevomatCodingStandard.Commenting.RequireOneLineDocComment"/>
+    <!-- Перед точкой с запятой в конце строки не должно быть пробела !-->
+    <rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>
 
-        <!-- Ненужные правила -->
-        <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.DisallowArrayTypeHintSyntax"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint"/>
-
-        <exclude name="SlevomatCodingStandard.Functions.StaticClosure"/>
-        <exclude name="SlevomatCodingStandard.Functions.DisallowArrowFunction"/>
-        <exclude name="SlevomatCodingStandard.Functions.RequireArrowFunction"/>
-        <exclude name="SlevomatCodingStandard.Functions.RequireTrailingCommaInCall"/>
-        <exclude name="SlevomatCodingStandard.Functions.DisallowTrailingCommaInCall"/>
-        <exclude name="SlevomatCodingStandard.Functions.StrictCall"/>
-
-        <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions"/>
-        <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants"/>
-        <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation"/>
-        <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedExceptions"/>
-        <exclude name="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses"/>
-        <exclude name="SlevomatCodingStandard.Namespaces.UseOnlyWhitelistedNamespaces"/>
-
-        <exclude name="SlevomatCodingStandard.ControlStructures.NewWithoutParentheses"/>
-        <exclude name="SlevomatCodingStandard.ControlStructures.RequireMultiLineTernaryOperator"/>
-        <exclude name="SlevomatCodingStandard.ControlStructures.RequireTernaryOperator"/>
-        <exclude name="SlevomatCodingStandard.ControlStructures.DisallowShortTernaryOperator"/>
-        <exclude name="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing"/>
-        <exclude name="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing"/>
-        <exclude name="SlevomatCodingStandard.ControlStructures.RequireYodaComparison"/>
-        <exclude name="SlevomatCodingStandard.ControlStructures.AssignmentInCondition"/>
-        <exclude name="SlevomatCodingStandard.ControlStructures.DisallowEmpty"/>
-        <exclude name="SlevomatCodingStandard.ControlStructures.RequireSingleLineCondition"/>
-        <exclude name="SlevomatCodingStandard.ControlStructures.EarlyExit"/>
-        <exclude name="SlevomatCodingStandard.ControlStructures.DisallowNullSafeObjectOperator.DisallowedNullSafeObjectOperator"/>
-
-        <exclude name="SlevomatCodingStandard.PHP.RequireExplicitAssertion"/>
-        <exclude name="SlevomatCodingStandard.PHP.DisallowReference"/>
-
-        <exclude name="SlevomatCodingStandard.Classes.TraitUseDeclaration"/>
-        <exclude name="SlevomatCodingStandard.Classes.ForbiddenPublicProperty"/>
-        <exclude name="SlevomatCodingStandard.Classes.DisallowConstructorPropertyPromotion.DisallowedConstructorPropertyPromotion"/>
-
-        <exclude name="SlevomatCodingStandard.Commenting.EmptyComment"/>
-        <exclude name="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment"/>
-        <exclude name="SlevomatCodingStandard.Commenting.DisallowCommentAfterCode"/>
-
-        <exclude name="SlevomatCodingStandard.Numbers.RequireNumericLiteralSeparator"/>
-
-        <exclude name="SlevomatCodingStandard.Operators.DisallowEqualOperators"/>
-        <exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators"/>
-        <exclude name="SlevomatCodingStandard.Operators.RequireOnlyStandaloneIncrementAndDecrementOperators"/>
-
-        <exclude name="SlevomatCodingStandard.Arrays.DisallowImplicitArrayCreation"/>
-
-        <!-- Ненужные правила (php7.4 => php8.0 траблы)-->
-        <exclude name="SlevomatCodingStandard.Classes.DisallowConstructorPropertyPromotion.DisallowedConstructorPropertyPromotion"/>
-        <exclude name="SlevomatCodingStandard.Functions.DisallowTrailingCommaInDeclaration.DisallowedTrailingComma"/>
-        <exclude name="SlevomatCodingStandard.Classes.RequireAbstractOrFinal"/>
-        <exclude name="SlevomatCodingStandard.Functions.DisallowNamedArguments.DisallowedNamedArgument"/>
-    </rule>
-
-    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+    <!-- При обращении к методу объекта не должно быть пробелов между оператором объекта "->", методом и самим объектом !-->
+    <rule ref="Squiz.WhiteSpace.ObjectOperatorSpacing">
         <properties>
-            <property name="searchAnnotations" value="true"/>
+            <property name="ignoreNewlines" value="true"/>
         </properties>
     </rule>
 
-    <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly">
+    <!-- Необходимо использование пробелов между операторами сравнения/присвоения !-->
+    <rule ref="Squiz.WhiteSpace.OperatorSpacing">
         <properties>
-            <property name="allowFullyQualifiedGlobalClasses" value="true"/>
+            <property name="ignoreNewlines" value="true"/>
         </properties>
-        <exclude-pattern>config/*</exclude-pattern>
-        <exclude-pattern>app/Http/Kernel.php</exclude-pattern>
     </rule>
 
-    <ruleset name="Custom Standard" namespace="MyProject\CS\Standard">
+    <!-- Приводя тип нельзя использовать пробелы между скобками и самим типом. Необходимо писать (int) вместо ( int ) !-->
+    <rule ref="Squiz.WhiteSpace.CastSpacing"/>
 
-        <!--
-           The name attribute of the ruleset tag is displayed
-           when running PHP_CodeSniffer with the -v command line
-           argument.
+    <!-- Запрещаем использовать двойные кавычки если не используется подстановка переменных внутри при помощи {}  !-->
+    <rule ref="Squiz.Strings.DoubleQuoteUsage.NotRequired"/>
 
-           If you have custom sniffs, and they use a namespace prefix
-           that is different to the name of the directory containing
-           your ruleset.xml file, you can set the namespace prefix using
-           the namespace attribute of the ruleset tag.
-
-           For example, if your namespace format for sniffs is
-           MyProject\CS\Standard\Sniffs\Category, set the namespace to
-           MyProject\CS\Standard (everything up to \Sniffs\)
-        -->
-
-        <!--
-           The content of the description tag is not displayed anywhere
-           except in this file, so it can contain information for
-           developers who may change this file in the future.
-        -->
-        <description>A custom coding standard</description>
-
-<!--
-           You can hard-code config values used by sniffs directly
-           into your custom standard. Note that this does not work
-           for config values that override command line arguments,
-           such as show_warnings and report_format.
-
-           The following tag is equivalent to the command line argument:
-           &#45;&#45;runtime-set zend_ca_path /path/to/ZendCodeAnalyzer
--->
-        <config name="zend_ca_path" value="/path/to/ZendCodeAnalyzer"/>
-
-        <!--
-            If no files or directories are specified on the command line
-            your custom standard can specify what files should be checked
-            instead.
-
-            Note that file and directory paths specified in a ruleset are
-            relative to the ruleset's location, and that specifying any file or
-            directory path on the command line will ignore all file tags.
-         -->
-        <file>./path/to/directory</file>
-        <file>./path/to/file.php</file>
-
-<!--
-           You can hard-code ignore patterns directly into your
-           custom standard so you don't have to specify the
-           patterns on the command line.
-
-           The following two tags are equivalent to the command line argument:
-           &#45;&#45;ignore=*/tests/*,*/data/*
--->
-        <exclude-pattern>*/tests/*</exclude-pattern>
-        <exclude-pattern>*/data/*</exclude-pattern>
-
-        <!--
-            Patterns can be specified as relative if you would
-            like the relative path of the file checked instead of the
-            full path. This can sometimes help with portability.
-
-            The relative path is determined based on the paths you
-            pass into PHP_CodeSniffer on the command line.
-         -->
-        <exclude-pattern type="relative">^/tests/*</exclude-pattern>
-        <exclude-pattern type="relative">^/data/*</exclude-pattern>
-
-<!--
-           You can hard-code command line values into your custom standard.
-           Note that this does not work for the command line values:
-           -v[v][v], -l, -d, &#45;&#45;sniffs and &#45;&#45;standard
-
-           The following tags are equivalent to the command line arguments:
-           &#45;&#45;extensions=php,inc &#45;&#45;report=summary &#45;&#45;colors -sp
--->
-        <arg name="extensions" value="php,inc" />
-        <arg name="report" value="summary"/>
-        <arg name="colors"/>
-        <arg value="sp"/>
-
-        <!--
-           You can hard-code custom php.ini settings into your custom standard.
-           The following tag sets the memory limit to 64M.
-        -->
-        <ini name="memory_limit" value="64M"/>
-
-        <!--
-           If your helper classes need custom autoloading rules that you are
-           not able to include in other ways, you can hard-code files to include
-           before the ruleset is processed and any sniff classes have been loaded.
-           Note that autoload file paths are relative to the ruleset's location.
-
-           This is different to bootstrap files, which are loaded after the ruleset
-           has already been processed.
-        -->
-        <autoload>/path/to/autoload.php</autoload>
-        <autoload>/path/to/other/autoload.php</autoload>
-        <autoload>./autoload.php</autoload>
-
-        <!--
-           Include all sniffs in the PEAR standard. Note that the
-           path to the standard does not have to be specified as the
-           PEAR standard exists inside the PHP_CodeSniffer install
-           directory.
-        -->
-        <rule ref="PEAR"/>
-
-        <!--
-           Include all sniffs in an external standard directory. Note
-           that we have to specify the full path to the standard's
-           directory because it does not exist inside the PHP_CodeSniffer
-           install directory.
-        -->
-        <rule ref="/home/username/standards/mystandard"/>
-
-        <!--
-           Include everything in another ruleset.xml file. This is
-           really handy if you want to customise another developer's
-           custom standard. They just need to distribute their single
-           ruleset file to allow this.
-        -->
-        <rule ref="/home/username/standards/custom.xml"/>
-
-        <!--
-           Relative paths can also be used everywhere absolute paths are used.
-           Make sure the reference starts with ./ or ../ so PHP_CodeSniffer
-           knows it is a relative path.
-        -->
-        <rule ref="./standards/mystandard"/>
-        <rule ref="../username/custom.xml"/>
-
-        <!--
-           Include all sniffs in the Squiz standard except one. Note that
-           the name of the sniff being excluded is the code that the sniff
-           is given by PHP_CodeSniffer and is based on the file name and
-           path of the sniff class. You can display these codes using the
-           -s command line argument when checking a file.
-        -->
-        <rule ref="Squiz">
-            <exclude name="Squiz.PHP.CommentedOutCode"/>
-        </rule>
-
-        <!--
-           You can also exclude a single sniff message.
-        -->
-        <rule ref="Squiz">
-            <exclude name="Squiz.Strings.DoubleQuoteUsage.ContainsVar"/>
-        </rule>
-
-        <!--
-           Or, you can exclude a whole category of sniffs.
-        -->
-        <rule ref="Squiz">
-            <exclude name="Squiz.PHP"/>
-        </rule>
-
-        <!--
-            You can even exclude a whole standard. This example includes
-            all sniffs from the Squiz standard, but excludes any that come
-            from the Generic standard.
-         -->
-        <rule ref="Squiz">
-            <exclude name="Generic"/>
-        </rule>
-
-        <!--
-           Include some specific sniffs from the Generic standard.
-           Note again that the name of the sniff is the code that
-           PHP_CodeSniffer gives it.
-        -->
-        <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
-        <rule ref="Generic.Commenting.Todo"/>
-        <rule ref="Generic.ControlStructures.InlineControlStructure"/>
-
-        <!--
-           If you are including sniffs that are not installed, you can
-           reference the sniff class using an absolute or relative path
-           instead of using the sniff code.
-        -->
-        <rule ref="/path/to/standards/Generic/Sniffs/Commenting/TodoSniff.php"/>
-        <rule ref="../Generic/Sniffs/ControlStructures/InlineControlStructureSniff.php"/>
-
-        <!--
-           Here we are including a specific sniff but also changing
-           the error message of a specific message inside the sniff.
-           Note that the specific code for the message, which is
-           TaskFound in this case, is defined by the sniff developer.
-           You can display these codes by using the -s command line
-           argument when checking a file.
-
-           Also note that this message has a variable inside it,
-           which is why it is important that sniffs use a printf style
-           format for their error messages.
-
-           We also drop the severity of this message from the
-           default value (5) so that it is hidden by default. It can be
-           displayed by setting the minimum severity on the PHP_CodeSniffer
-           command line. This is great if you want to use some messages
-           only in code reviews and not have them block code commits.
-        -->
-        <rule ref="Generic.Commenting.Todo.TaskFound">
-            <message>Please review this TODO comment: %s</message>
-            <severity>3</severity>
-        </rule>
-
-        <!--
-           You can also change the type of a message from error to
-           warning and vice versa.
-        -->
-        <rule ref="Generic.Commenting.Todo.CommentFound">
-            <type>error</type>
-        </rule>
-        <rule ref="Squiz.Strings.DoubleQuoteUsage.ContainsVar">
-            <type>warning</type>
-        </rule>
-
-        <!--
-           Or change the type of all messages produced by
-           a sniff, category, or standard.
-        -->
-        <rule ref="Generic.Formatting.MultipleStatementAlignment">
-            <type>error</type>
-        </rule>
-        <rule ref="Squiz.Strings">
-            <type>warning</type>
-        </rule>
-        <rule ref="PSR12">
-            <type>warning</type>
-        </rule>
-
-        <!--
-           Here we change two messages from the same sniff. Note how the
-           codes are slightly different because the sniff developer has
-           defined both a MaxExceeded message and a TooLong message. In the
-           case of this sniff, one is used for warnings and one is used
-           for errors.
-        -->
-        <rule ref="Generic.Files.LineLength.MaxExceeded">
-            <message>Line contains %2$s chars, which is more than the limit of %1$s</message>
-        </rule>
-        <rule ref="Generic.Files.LineLength.TooLong">
-            <message>Line longer than %s characters; contains %s characters</message>
-        </rule>
-
-        <!--
-           Some sniffs have public member vars that allow you to
-           customise specific elements of the sniff. In the case of
-           the Generic LineLength sniff, you can customise the limit
-           at which the sniff will throw warnings and the limit at
-           which it will throw errors.
-
-           The rule below includes the LineLength sniff but changes the
-           settings so the sniff will show warnings for any line longer
-           than 90 chars and errors for any line longer than 100 chars.
-        -->
-        <rule ref="Generic.Files.LineLength">
-            <properties>
-                <property name="lineLimit" value="90"/>
-                <property name="absoluteLineLimit" value="100"/>
-            </properties>
-        </rule>
-
-        <!--
-           Another useful example of changing sniff settings is
-           to specify the end of line character that your standard
-           should check for.
-        -->
-        <rule ref="Generic.Files.LineEndings">
-            <properties>
-                <property name="eolChar" value="\r\n"/>
-            </properties>
-        </rule>
-
-        <!--
-           Boolean values should be specified by using the strings
-           "true" and "false" rather than the integers 0 and 1.
-        -->
-        <rule ref="Generic.Formatting.MultipleStatementAlignment">
-            <properties>
-                <property name="maxPadding" value="8"/>
-                <property name="ignoreMultiLine" value="true"/>
-            </properties>
-        </rule>
-
-        <!--
-            Array values are specified by using "element" tags
-            with "key" and "value" attributes.
-
-            NOTE: This syntax is is only supported in PHP_CodeSniffer
-            versions 3.3.0 and greater.
-         -->
-        <rule ref="Generic.PHP.ForbiddenFunctions">
-            <properties>
-                <property name="forbiddenFunctions" type="array">
-                    <element key="delete" value="unset"/>
-                    <element key="print" value="echo"/>
-                    <element key="create_function" value="null"/>
-                </property>
-            </properties>
-        </rule>
-
-        <!--
-           Before version 3.3.0, array values are specified by using a string
-           representation of the array.
-
-           NOTE: This syntax is deprecated and will be removed in
-           PHP_CodeSniffer version 4.0
-        -->
-        <rule ref="Generic.PHP.ForbiddenFunctions">
-            <properties>
-                <property name="forbiddenFunctions" type="array" value="delete=>unset,print=>echo,create_function=>null" />
-            </properties>
-        </rule>
-
-        <!--
-           If you are including another standard, some array properties may
-           have already been defined. Instead of having to redefine them
-           you can choose to extend the property value instead. Any elements with
-           new keys will be added to the property value, and any elements with
-           existing keys will override the imported value.
-
-           NOTE: This syntax is is only supported in PHP_CodeSniffer
-           versions 3.4.0 and greater.
-        -->
-        <rule ref="Generic.PHP.ForbiddenFunctions">
-            <properties>
-                <property name="forbiddenFunctions" type="array" extend="true">
-                    <element key="sizeof" value="count"/>
-                </property>
-            </properties>
-        </rule>
-
-        <!--
-           If you want to completely disable an error message in a sniff
-           but you don't want to exclude the whole sniff, you can
-           change the severity of the message to 0. In this case, we
-           want the Squiz DoubleQuoteUsage sniff to be included in our
-           standard, but we don't want the ContainsVar error message to
-           ever be displayed.
-        -->
-        <rule ref="Squiz.Strings.DoubleQuoteUsage.ContainsVar">
-            <severity>0</severity>
-        </rule>
-
-        <!--
-           There is a special internal error message produced by PHP_CodeSniffer
-           when it is unable to detect code in a file, possible due to
-           the use of short open tags even though php.ini disables them.
-           You can disable this message in the same way as sniff messages.
-
-           Again, the code here will be displayed in the PHP_CodeSniffer
-           output when using the -s command line argument while checking a file.
-        -->
-        <rule ref="Internal.NoCodeFound">
-            <severity>0</severity>
-        </rule>
-
-        <!--
-           You can hard-code ignore patterns for specific sniffs,
-           a feature not available on the command line. Please note that
-           all sniff-specific ignore patterns are checked using absolute paths.
-
-           The code here will hide all messages from the Squiz DoubleQuoteUsage
-           sniff for files that match either of the two exclude patterns.
-        -->
-        <rule ref="Squiz.Strings.DoubleQuoteUsage">
-            <exclude-pattern>*/tests/*</exclude-pattern>
-            <exclude-pattern>*/data/*</exclude-pattern>
-        </rule>
-
-        <!--
-           You can also be more specific and just exclude some messages.
-           Please note that all message-specific ignore patterns are
-           checked using absolute paths.
-
-           The code here will just hide the ContainsVar error generated by the
-           Squiz DoubleQuoteUsage sniff for files that match either of the two
-           exclude patterns.
-        -->
-        <rule ref="Squiz.Strings.DoubleQuoteUsage.ContainsVar">
-            <exclude-pattern>*/tests/*</exclude-pattern>
-            <exclude-pattern>*/data/*</exclude-pattern>
-        </rule>
-
-        <!--
-          You can hard-code include patterns for specific sniffs,
-          allowing you to only include sniffs when checking specific files.
-          Please note that all sniff-specific include patterns are checked using
-          absolute paths.
-
-          The code here will only run the Squiz DoubleQuoteUsage sniff for
-          files that match either of the two include patterns.
-       -->
-        <rule ref="Squiz.Strings.DoubleQuoteUsage">
-            <include-pattern>*/templates/*</include-pattern>
-            <include-pattern>*\.tpl$</include-pattern>
-        </rule>
-
-        <!--
-           As with exclude rules, you can be more specific and just include
-           some messages. Please note that all message-specific include patterns
-           are checked using absolute paths.
-
-           The code here will just show the ContainsVar error generated by the
-           Squiz DoubleQuoteUsage sniff for files that match either of the two
-           include patterns.
-        -->
-        <rule ref="Squiz.Strings.DoubleQuoteUsage.ContainsVar">
-            <include-pattern>*/templates/*</include-pattern>
-            <include-pattern>*\.tpl$</include-pattern>
-        </rule>
-
-    </ruleset>
-    <rule ref="SlevomatCodingStandard.Classes.TraitUseSpacing">
+    <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
         <properties>
-            <property name="linesCountBeforeFirstUse" value="0"/>
-            <property name="linesCountBeforeFirstUseWhenFirstInClass" value="0"/>
-            <property name="linesCountBetweenUses" value="0"/>
+            <property name="requiredSpacesAfterOpen" value="0"/>
+            <property name="requiredSpacesBeforeClose" value="0"/>
+            <property name="equalsSpacing" value="1"/>
+        </properties>
+    </rule>
+    <rule ref="Squiz.ControlStructures.ForLoopDeclaration"/>
+    <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration"/>
+
+    <!-- Запрещаем использовать закрывающий PHP тег ?> в файлах !-->
+    <rule ref="Zend.Files.ClosingTag"/>
+
+    <!--
+        Если вызов метода переносится на другую строчку, то делать это нужно вместе с "->". Например
+        Правильно: (new \stdClass())->help()
+            ->c();
+        Неправильно: (new \stdClass())->help()->
+            c();
+    !-->
+    <rule ref="PEAR.WhiteSpace.ObjectOperatorIndent"/>
+
+    <!--
+        Запрещаем использовать дефолтные комментарии PhpStorm в стиле:
+        - Created by PhpStorm.
+        - Constructor.
+    !-->
+    <rule ref="SlevomatCodingStandard.Commenting.ForbiddenComments"/>
+
+    <!-- Пустых комментариев в коде не должно быть !-->
+    <rule ref="SlevomatCodingStandard.Commenting.EmptyComment"/>
+
+
+    <!-- До и после use требуем поставить пустую строчку !-->
+    <rule ref="SlevomatCodingStandard.Namespaces.UseSpacing">
+        <properties>
+            <property name="linesCountBeforeFirstUse" value="1"/>
+            <property name="linesCountBetweenUseTypes" value="1"/>
             <property name="linesCountAfterLastUse" value="1"/>
-            <property name="linesCountAfterLastUseWhenLastInClass" value="0"/>
         </properties>
     </rule>
 
-    <rule ref="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces">
+    <!-- Требует наличия пустой строки до и после объявления namespace !-->
+    <rule ref="SlevomatCodingStandard.Namespaces.NamespaceSpacing">
         <properties>
-            <property name="linesCountAfterOpeningBrace" value="0"/>
-            <property name="linesCountBeforeClosingBrace" value="0"/>
+            <property name="linesCountBeforeNamespace" value="1"/>
+            <property name="linesCountAfterNamespace" value="1"/>
         </properties>
     </rule>
 
+    <!-- Проверяет отступы при объявлении namespace и запрещает использовать скобки {} !-->
+    <rule ref="SlevomatCodingStandard.Namespaces.NamespaceDeclaration"/>
+
+    <!-- При импорте класса не должно быть начального слеша \ !-->
+    <rule ref="SlevomatCodingStandard.Namespaces.UseDoesNotStartWithBackslash"/>
+
+    <!-- Не более 1 namespace в файле !-->
+    <rule ref="SlevomatCodingStandard.Namespaces.RequireOneNamespaceInFile"/>
+
+    <!-- Проверяем отступы между типом параметра и самим именем параметра в методах и функциях !-->
+    <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHintSpacing"/>
+
+    <!-- Настраиваем пустые строки между свойствами объектов !-->
     <rule ref="SlevomatCodingStandard.Classes.PropertySpacing">
         <properties>
-            <property name="minLinesCountBeforeWithComment" value="0"/>
+            <property name="minLinesCountBeforeWithComment" value="1"/>
             <property name="maxLinesCountBeforeWithComment" value="1"/>
             <property name="minLinesCountBeforeWithoutComment" value="0"/>
             <property name="maxLinesCountBeforeWithoutComment" value="1"/>
         </properties>
     </rule>
 
-    <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+    <!-- Убираем из лишние аннотации !-->
+    <rule ref="SlevomatCodingStandard.Commenting.ForbiddenAnnotations">
         <properties>
-            <property name="rootNamespaces" type="array">
-                <element key="app" value="App"/>
-                <element key="tests" value="Tests"/>
-            </property>
-        </properties>
-        <exclude-pattern>database/*</exclude-pattern>
-    </rule>
-
-    <rule ref="SlevomatCodingStandard.Files.LineLength">
-        <properties>
-            <property name="lineLengthLimit" value="160"/>
-            <property name="ignoreComments" value="true"/>
-            <property name="ignoreImports" value="true"/>
+            <property name="forbiddenAnnotations" type="array"
+                      value="@author,@created,@version,@package,@copyright,@license"/>
         </properties>
     </rule>
 
-    <rule ref="SlevomatCodingStandard.Functions.RequireMultiLineCall">
+    <!-- Запрещает напрямую работать с супрглобальными массивами !-->
+    <rule ref="SlevomatCodingStandard.Variables.DisallowSuperGlobalVariable"/>
+
+    <!-- Находит пустые try-catch блоки которые по сути тоже самое, что и подавление ошибок через @ !-->
+    <rule ref="SlevomatCodingStandard.Exceptions.DeadCatch"/>
+
+    <!-- Требует запятую в многострочных массивах после последнего элемента !-->
+    <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
+
+    <!-- Заставляет использовать короткую запись тернарного оператора при сравнении с null !-->
+    <rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceOperator"/>
+    <rule ref="SlevomatCodingStandard.ControlStructures.RequireShortTernaryOperator"/>
+
+    <!-- Просит использовать тернарный оператор если это возможно !-->
+    <rule ref="SlevomatCodingStandard.ControlStructures.RequireTernaryOperator"/>
+
+    <!--
+        Проверяет возможно ли использование раннего выхода (на сложных условиях путается и входит в рекурсию)
+        foreach ($data as $key => $value)
+        {
+          if (empty($value)) {
+            continue;
+          }
+
+          if ($value === time()) {
+            // ...
+            continue;
+          }
+
+          if ($value === $key) {
+            // ....
+            continue;
+          }
+        }
+    !-->
+    <rule ref="SlevomatCodingStandard.ControlStructures.EarlyExit"/>
+
+    <!-- Требует использовать жесткое сравнение с учетом типа === или !== вместо мягкого == или != !-->
+    <rule ref="SlevomatCodingStandard.Operators.DisallowEqualOperators"/>
+
+    <!-- Разрешает использование инкремента и декремента только в простых констуркциях, чтобы не превращять код в BrainFuck !-->
+    <rule ref="SlevomatCodingStandard.Operators.RequireOnlyStandaloneIncrementAndDecrementOperators"/>
+
+    <!-- Для перфоманса просит вызывать некоторые методы без распаковки !-->
+    <!--<rule ref="SlevomatCodingStandard.PHP.OptimizedFunctionsWithoutUnpacking" />-->
+
+    <!-- При импорте классов из одного неймспейса просит выполнить рефакторинг !-->
+    <rule ref="SlevomatCodingStandard.Namespaces.UseFromSameNamespace"/>
+
+    <!-- Запрещает импортировать классы в namespace и при подмене присваивать им такое же имя как в оригинале !-->
+    <rule ref="SlevomatCodingStandard.Namespaces.UselessAlias"/>
+
+    <!-- Поиск неиспользуемых импортированных классов через use !-->
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
         <properties>
-            <property name="minLineLength" value="160"/>
+            <!-- Включаем поиск по аннотациям !-->
+            <property name="searchAnnotations" value="true"/>
         </properties>
     </rule>
 
+    <!-- Запрещает неявное создание массивов !-->
+    <rule ref="SlevomatCodingStandard.Arrays.DisallowImplicitArrayCreation"/>
+
+    <!-- Поиск неиспользуемых переменных закинутых в замыканиче через use !-->
+    <rule ref="SlevomatCodingStandard.Functions.UnusedInheritedVariablePassedToClosure"/>
+
+    <!-- Константы классов должны объявляться с указанием области видимости !-->
+    <rule ref="SlevomatCodingStandard.Classes.ClassConstantVisibility"/>
+
+    <!-- Если указан типо возвращаеммых данных из метода, то проверяем где стоит двоеточие!-->
+    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHintSpacing"/>
+
+    <!-- Типы должны быть указаны в нижнем регистре !-->
+    <rule ref="Generic.PHP.LowerCaseType"/>
+
+    <!-- Вызов функции в условиях цикла необходимо вынести за пределы цикла !-->
+    <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall"/>
+
+    <!-- Отключаем mixed тип в phpDoc !-->
+    <rule ref="SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint"/>
+
+    <!-- Отключаем ненужные phpdoc, которые дублируют декларацию методов !-->
+    <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint.UselessAnnotation" />
+
+    <!-- Отключаем ненужные phpdoc, которые дублируют декларацию свойств объекта !-->
+    <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint.UselessAnnotation" />
+
+    <!-- Отключаем ненужные phpdoc, которые дублируют возвращаемый тип !-->
+    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint.UselessAnnotation" />
+
+    <!--
+        Если в методе аргументу присвоен тип и указано значение по умолчанию null,
+        то необходимо тип сделать nullable подставив вопрос.
+        Правильно: ?int $var = null
+        Неправильно: int $var = null
+
+        Все круто, но это вызывает ошибку объявления класса, когда интерфейс объявлен без этого аргумента
+    !-->
+    <rule ref="SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue"/>
+
+    <!-- Все классы должны быть импортированы в глобальную область видимости не допускается префикс \ в коде !-->
+    <rule ref="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName" />
+
+    <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
+        <properties>
+            <property name="spacesCountAroundEqualsSign" value="0"/>
+        </properties>
+    </rule>
+
+    <!-- Пустая строка перед использованием parent:: !-->
+    <rule ref="SlevomatCodingStandard.Classes.ParentCallSpacing" />
+
+    <!-- Настройка отступов у use при импорте трейтов !-->
+    <rule ref="SlevomatCodingStandard.Classes.TraitUseSpacing">
+        <properties>
+            <property name="linesCountBeforeFirstUseWhenFirstInClass" value="0" />
+            <property name="linesCountAfterLastUseWhenLastInClass" value="0" />
+        </properties>
+    </rule>
+
+    <!-- Убирает пустые строки в phpdoc !-->
+    <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing" />
+
+    <!-- Перед return должна быть пустая строка!-->
+    <rule ref="SlevomatCodingStandard.ControlStructures.JumpStatementsSpacing" />
+
+    <!-- Требуем использовать Throwable вместо Exception !-->
+    <rule ref="SlevomatCodingStandard.Exceptions.ReferenceThrowableOnly" />
+
+    <!-- Все импортируемые классы должны быть отсортированы по алфавиту !-->
+    <rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses" />
+
+    <!-- Отключает запятую после последнего параметра при вызове функций !-->
+    <rule ref="SlevomatCodingStandard.Functions.DisallowTrailingCommaInCall" />
+
+    <!-- Замыкания без $this должны быть определены как static !-->
+    <rule ref="SlevomatCodingStandard.Functions.StaticClosure" />
+
+    <!-- Требует использовать запятую при объявлении методов и замыканий в несколько строк !-->
+    <rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInClosureUse" />
+    <rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInDeclaration" />
+
+    <!-- Запрещает создавать пустые функции. Если это необходимо, то нужно оставить комментарий !-->
+    <rule ref="SlevomatCodingStandard.Functions.DisallowEmptyFunction" />
+
+    <!-- Настраивает отступы между стрелочными функциями. Правильно писать fn($param) => $param * 2; !-->
     <rule ref="SlevomatCodingStandard.Functions.ArrowFunctionDeclaration">
         <properties>
-            <property name="spacesCountAfterKeyword" value="0"/>
+            <property name="spacesCountAfterKeyword" value="0" />
         </properties>
     </rule>
 
-    <rule ref="SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition">
-        <properties>
-            <property name="minLineLength" value="140"/>
-        </properties>
-    </rule>
+    <!-- Использовать in_array только в режиме со сравнением типов !-->
+    <rule ref="SlevomatCodingStandard.Functions.StrictCall" />
 
-    <rule ref="SlevomatCodingStandard.Exceptions.ReferenceThrowableOnly">
-        <exclude-pattern>app/Exceptions/Handler.php</exclude-pattern>
-    </rule>
+    <!-- вместо if (...) return true; else return false; нужно использовать return (...); !-->
+    <rule ref="SlevomatCodingStandard.ControlStructures.UselessIfConditionWithReturn" />
 
-    <rule ref="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration">
-        <exclude-pattern>database/factories/*</exclude-pattern>
-    </rule>
+    <!-- Использовать сокращенную конкатенацию $a .= 'b'; вместо $a = $a . 'b'; !-->
+    <rule ref="SlevomatCodingStandard.Operators.RequireCombinedAssignmentOperator" />
 
-    <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing">
-        <exclude
-            name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectLinesCountBetweenDescriptionAndAnnotations"/>
-        <exclude
-            name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectLinesCountBetweenDifferentAnnotationsTypes"/>
-        <exclude
-            name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectLinesCountBetweenAnnotationsGroups"/>
-        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectAnnotationsGroup"/>
-        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectOrderOfAnnotationsGroup"/>
-        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectOrderOfAnnotationsInGroup"/>
-    </rule>
+    <!-- Настраивает отступы при подстановке параметров функций по имени !-->
+    <rule ref="SlevomatCodingStandard.Functions.NamedArgumentSpacing" />
 
-    <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces">
-        <properties>
-            <property name="ignoreSpacesInAnnotation" value="true"/>
-            <property name="ignoreSpacesInComment" value="true"/>
-        </properties>
-    </rule>
-    <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces">
-        <properties>
-            <property name="ignoreSpacesInAnnotation" value="true"/>
-            <property name="ignoreSpacesInComment" value="true"/>
-        </properties>
+    <!-- Если exception никак не используется в catch, то и переменную выделять не нужно !-->
+    <rule ref="SlevomatCodingStandard.Exceptions.RequireNonCapturingCatch" />
+
+    <!-- Запрещает использовать return(); !-->
+    <rule ref="SlevomatCodingStandard.ControlStructures.LanguageConstructWithParentheses" />
+
+    <!-- После new нельзя использовать скобки new (ClassName); !-->
+    <rule ref="SlevomatCodingStandard.ControlStructures.NewWithParentheses" />
+
+    <!-- Настраивает отступы после ... при распаковке массивов !-->
+    <rule ref="SlevomatCodingStandard.Operators.SpreadOperatorSpacing" />
+
+    <!-- Проверяет, что в метод передается ненужное значение, которое и так равняется значению по умолчанию !-->
+    <rule ref="SlevomatCodingStandard.Functions.UselessParameterDefaultValue" />
+
+    <!-- Запрещает использовать continue в switch-case без целочисленного параметра (с PHP 7.3 варнинг появился) !-->
+    <rule ref="SlevomatCodingStandard.ControlStructures.DisallowContinueWithoutIntegerOperandInSwitch" />
+
+    <!-- Конструкцию вида $obj === null ? null : $obj->call() нужно заменить на $obj?->call() !-->
+    <rule ref="SlevomatCodingStandard.ControlStructures.RequireNullSafeObjectOperator" />
+
+    <!-- Настраивает отступ после & при передаче переменной по ссылке !-->
+    <rule ref="SlevomatCodingStandard.PHP.ReferenceSpacing" />
+
+    <!-- Требуется использовать синтаксис nowdoc вместо heredoc !-->
+    <rule ref="SlevomatCodingStandard.PHP.RequireNowdoc" />
+
+    <!-- Короткий синтаксис [...] вместо list(...) !-->
+    <rule ref="SlevomatCodingStandard.PHP.ShortList" />
+
+    <!-- Ищет бесполезные круглые скобки в условиях !-->
+    <rule ref="SlevomatCodingStandard.PHP.UselessParentheses" />
+
+    <!-- Ищет бесполезные точки с запятой !-->
+    <rule ref="SlevomatCodingStandard.PHP.UselessSemicolon" />
+
+    <!-- Запрещает писать $a ['b'] !-->
+    <rule ref="SlevomatCodingStandard.Arrays.ArrayAccess" />
+
+    <!-- Проверяет пробелы между элементами массивов и запятыми в однострочных массивах !-->
+    <rule ref="SlevomatCodingStandard.Arrays.SingleLineArrayWhitespace" />
+
+    <!-- Поиск неиспользуемых переменных !-->
+    <rule ref="SlevomatCodingStandard.Variables.UnusedVariable" />
+
+    <!-- Поиск бесполезных переменных!-->
+    <rule ref="SlevomatCodingStandard.Variables.UselessVariable" />
+
+    <!-- Поиск бесполеных аннотаций для констант !-->
+    <rule ref="SlevomatCodingStandard.TypeHints.UselessConstantTypeHint" />
+
+    <!-- При документировании многоуровневых массивов просит использовать джинерики !-->
+    <rule ref="SlevomatCodingStandard.TypeHints.DisallowArrayTypeHintSyntax" />
+
+    <!-- Проверяет отступы после : при объявлении возвращаемого типа !-->
+    <rule ref="SlevomatCodingStandard.Classes.BackedEnumTypeSpacing" />
+
+    <rule ref="PSR12">
+        <!-- Необходимо использовать короткие имена для типов: integer -> int, boolean -> bool !-->
+        <!--<rule ref="PSR12.Keywords.ShortFormTypeKeywords" />-->
+
+        <!-- Разрешаем импортировать классы в namespace через фигурные собки !-->
+        <!--<rule ref="PSR12.Namespaces.CompoundNamespaceDepth" />-->
+
+        <!-- При объявлении nullable типа запрещено использовать пробел. Вместо "? int" следует писать "?int" !-->
+        <!--<rule ref="PSR12.Functions.NullableTypeDeclaration" />-->
+
+        <!-- PSR12.Operators.OperatorSpacing = Squiz.WhiteSpace.OperatorSpacing !-->
+        <exclude name="PSR12.Operators.OperatorSpacing" />
     </rule>
 
 </ruleset>

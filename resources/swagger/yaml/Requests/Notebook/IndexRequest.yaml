@@ -1,0 +1,16 @@
+components:
+  requestBodies:
+    IndexNotebookRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - page
+            properties:
+              page:
+                type: integer
+                example: 2
+              perPage:
+                type: integer
+                example: 5

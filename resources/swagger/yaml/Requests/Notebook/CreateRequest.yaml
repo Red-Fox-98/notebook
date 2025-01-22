@@ -1,0 +1,38 @@
+components:
+  requestBodies:
+    CreateNotebookRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - surname
+              - patronymic
+              - phone
+              - email
+            properties:
+              name:
+                type: string
+                example: "Иван"
+              surname:
+                type: string
+                example: "Иванов"
+              patronymic:
+                type: string
+                example: "Иванович"
+              company:
+                type: string
+                example: "company"
+              phone:
+                type: integer
+                example: 89998887766
+              email:
+                type: string
+                example: example@example.com
+              date_of_birth:
+                type: string
+                example: 1999-09-09
+              photo:
+                type: file
+                example: "/tmp/phpuli87fl2n0cvfQoqx7j"
