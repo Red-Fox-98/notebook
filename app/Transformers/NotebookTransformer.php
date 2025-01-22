@@ -9,7 +9,7 @@ use Flugg\Responder\Transformers\Transformer;
 
 class NotebookTransformer extends Transformer
 {
-    public function transform(Notebook $notebook): mixed
+    public function transform(Notebook $notebook): array
     {
         return [
             'id' => $notebook->id,
